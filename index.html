@@ -105,16 +105,21 @@
       </section>
 
       <section class="gallery" id="gallery" aria-labelledby="gallery-title">
-        <div class="section-head">
-          <p class="kicker">Gallery</p>
-          <h2 id="gallery-title">Installed doors and windows.</h2>
+        <div class="gallery-bar">
+          <div class="section-head">
+            <p class="kicker">Gallery</p>
+            <h2 id="gallery-title">Installed doors and windows.</h2>
+          </div>
+          <button type="button" class="gallery-toggle" aria-pressed="false">Pause</button>
         </div>
-        <div class="gallery-grid">
-          <button type="button" class="gallery-card gallery-card-wide" data-src="assets/gallery-stacking.jpg" data-alt="Dark aluminum stacking doors, partly folded open across a wide opening.">
+        <div class="gallery-roll">
+          <div class="gallery-track">
+            <div class="gallery-set">
+          <button type="button" class="gallery-card is-land" data-src="assets/gallery-stacking.jpg" data-alt="Dark aluminum stacking doors, partly folded open across a wide opening.">
             <img src="assets/gallery-stacking.jpg" width="808" height="748" alt="" />
             <span>Stacking doors</span>
           </button>
-          <button type="button" class="gallery-card" data-src="assets/gallery-sliding.jpg" data-alt="Dark bronze aluminum sliding doors with a grid of glass panes, one leaf open.">
+          <button type="button" class="gallery-card is-land" data-src="assets/gallery-sliding.jpg" data-alt="Dark bronze aluminum sliding doors with a grid of glass panes, one leaf open.">
             <img src="assets/gallery-sliding.jpg" width="1024" height="576" alt="" />
             <span>Sliding doors</span>
           </button>
@@ -122,15 +127,15 @@
             <img src="assets/gallery-entrance.jpg" width="575" height="1024" alt="" />
             <span>Entrance door</span>
           </button>
-          <button type="button" class="gallery-card" data-src="assets/gallery-windows.jpg" data-alt="Dark aluminum doors and windows, with one awning pane open.">
+          <button type="button" class="gallery-card is-land" data-src="assets/gallery-windows.jpg" data-alt="Dark aluminum doors and windows, with one awning pane open.">
             <img src="assets/gallery-windows.jpg" width="878" height="826" alt="" />
             <span>Windows &amp; doors</span>
           </button>
-          <button type="button" class="gallery-card" data-src="assets/gallery-double.jpg" data-alt="Pair of dark horizontal-slat aluminum doors in a tiled room.">
+          <button type="button" class="gallery-card is-land" data-src="assets/gallery-double.jpg" data-alt="Pair of dark horizontal-slat aluminum doors in a tiled room.">
             <img src="assets/gallery-double.jpg" width="1024" height="576" alt="" />
             <span>Double doors</span>
           </button>
-          <button type="button" class="gallery-card" data-src="assets/gallery-feature.jpg" data-alt="Wide dark aluminum feature doors with frosted glass panels.">
+          <button type="button" class="gallery-card is-land" data-src="assets/gallery-feature.jpg" data-alt="Wide dark aluminum feature doors with frosted glass panels.">
             <img src="assets/gallery-feature.jpg" width="1024" height="576" alt="" />
             <span>Feature doors</span>
           </button>
@@ -150,6 +155,8 @@
             <img src="assets/gallery-slat.jpg" width="576" height="1024" alt="" />
             <span>Slat door</span>
           </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -240,13 +247,42 @@
       const lightbox = document.querySelector("#lightbox");
       const lightboxImage = lightbox.querySelector("img");
       const lightboxClose = lightbox.querySelector(".lightbox-close");
+      const track = document.querySelector(".gallery-track");
+      const toggle = document.querySelector(".gallery-toggle");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let userPaused = false;
+      let held = false;
 
-      document.querySelectorAll(".gallery-card").forEach((card) => {
-        card.addEventListener("click", () => {
-          lightboxImage.src = card.dataset.src;
-          lightboxImage.alt = card.dataset.alt;
-          lightbox.showModal();
+      if (!reduceMotion) {
+        const copy = track.querySelector(".gallery-set").cloneNode(true);
+        copy.setAttribute("aria-hidden", "true");
+        copy.querySelectorAll("button").forEach((button) => {
+          button.tabIndex = -1;
         });
+        track.append(copy);
+      } else {
+        toggle.hidden = true;
+      }
+
+      function syncRoll() {
+        track.classList.toggle("is-paused", userPaused || held || reduceMotion);
+      }
+
+      toggle.addEventListener("click", () => {
+        userPaused = !userPaused;
+        toggle.setAttribute("aria-pressed", String(userPaused));
+        toggle.textContent = userPaused ? "Play" : "Pause";
+        syncRoll();
+      });
+
+      track.addEventListener("click", (event) => {
+        const card = event.target.closest(".gallery-card");
+        if (!card) return;
+        lightboxImage.src = card.dataset.src;
+        lightboxImage.alt = card.dataset.alt;
+        held = true;
+        syncRoll();
+        lightbox.showModal();
       });
 
       lightboxClose.addEventListener("click", () => lightbox.close());
@@ -254,9 +290,13 @@
         if (event.target === lightbox) lightbox.close();
       });
       lightbox.addEventListener("close", () => {
+        held = false;
+        syncRoll();
         lightboxImage.removeAttribute("src");
         lightboxImage.alt = "";
       });
+
+      syncRoll();
     </script>
   </body>
 </html>
