@@ -36,6 +36,7 @@
 
       <nav class="site-nav" aria-label="Page">
         <a href="#work">Work</a>
+        <a href="#gallery">Gallery</a>
         <a href="#why">Why TopFit</a>
         <a href="#quote">Free quote</a>
       </nav>
@@ -100,6 +101,55 @@
             />
             <figcaption>Aluminum doors</figcaption>
           </figure>
+        </div>
+      </section>
+
+      <section class="gallery" id="gallery" aria-labelledby="gallery-title">
+        <div class="section-head">
+          <p class="kicker">Gallery</p>
+          <h2 id="gallery-title">Installed doors and windows.</h2>
+        </div>
+        <div class="gallery-grid">
+          <button type="button" class="gallery-card gallery-card-wide" data-src="assets/gallery-stacking.jpg" data-alt="Dark aluminum stacking doors, partly folded open across a wide opening.">
+            <img src="assets/gallery-stacking.jpg" width="808" height="748" alt="" />
+            <span>Stacking doors</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-sliding.jpg" data-alt="Dark bronze aluminum sliding doors with a grid of glass panes, one leaf open.">
+            <img src="assets/gallery-sliding.jpg" width="1024" height="576" alt="" />
+            <span>Sliding doors</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-entrance.jpg" data-alt="Black aluminum entrance door with a gold pull handle, a louvre panel, and frosted glass.">
+            <img src="assets/gallery-entrance.jpg" width="575" height="1024" alt="" />
+            <span>Entrance door</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-windows.jpg" data-alt="Dark aluminum doors and windows, with one awning pane open.">
+            <img src="assets/gallery-windows.jpg" width="878" height="826" alt="" />
+            <span>Windows &amp; doors</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-double.jpg" data-alt="Pair of dark horizontal-slat aluminum doors in a tiled room.">
+            <img src="assets/gallery-double.jpg" width="1024" height="576" alt="" />
+            <span>Double doors</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-feature.jpg" data-alt="Wide dark aluminum feature doors with frosted glass panels.">
+            <img src="assets/gallery-feature.jpg" width="1024" height="576" alt="" />
+            <span>Feature doors</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-geometric.jpg" data-alt="Dark aluminum entrance door with a geometric glass pattern.">
+            <img src="assets/gallery-geometric.jpg" width="480" height="640" alt="" />
+            <span>Geometric door</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-louvre.jpg" data-alt="Dark aluminum door with a louvre panel, frosted glass, and a long steel handle.">
+            <img src="assets/gallery-louvre.jpg" width="768" height="1024" alt="" />
+            <span>Louvre door</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-white.jpg" data-alt="White aluminum door with a louvre panel, frosted glass, and a steel pull handle.">
+            <img src="assets/gallery-white.jpg" width="576" height="1024" alt="" />
+            <span>White entrance</span>
+          </button>
+          <button type="button" class="gallery-card" data-src="assets/gallery-slat.jpg" data-alt="Dark horizontal-slat aluminum door beside a wall fireplace.">
+            <img src="assets/gallery-slat.jpg" width="576" height="1024" alt="" />
+            <span>Slat door</span>
+          </button>
         </div>
       </section>
 
@@ -181,5 +231,32 @@
     </footer>
 
     <a class="call-bar" href="tel:+27761528841">Free quote · 076 152 8841</a>
+
+    <dialog class="lightbox" id="lightbox">
+      <button type="button" class="lightbox-close">Close</button>
+      <img alt="" />
+    </dialog>
+    <script>
+      const lightbox = document.querySelector("#lightbox");
+      const lightboxImage = lightbox.querySelector("img");
+      const lightboxClose = lightbox.querySelector(".lightbox-close");
+
+      document.querySelectorAll(".gallery-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          lightboxImage.src = card.dataset.src;
+          lightboxImage.alt = card.dataset.alt;
+          lightbox.showModal();
+        });
+      });
+
+      lightboxClose.addEventListener("click", () => lightbox.close());
+      lightbox.addEventListener("click", (event) => {
+        if (event.target === lightbox) lightbox.close();
+      });
+      lightbox.addEventListener("close", () => {
+        lightboxImage.removeAttribute("src");
+        lightboxImage.alt = "";
+      });
+    </script>
   </body>
 </html>
